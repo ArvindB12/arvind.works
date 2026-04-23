@@ -1668,6 +1668,11 @@ export default function Portfolio() {
 
   // Reliable cross-page navigation
   const navigateTo = (sectionId) => {
+    if (sectionId === "top") {
+      setPage("home");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     const el = document.getElementById(sectionId);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
