@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { GlassButton, GlassFilter } from "./components/ui/liquid-glass";
+import { PrismaHero } from "./components/ui/prisma-hero";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DESIGN SYSTEM
@@ -577,32 +579,30 @@ const SKILLS = [
     category: "Hard Skills",
     type: "hard",
     items: [
-      { name: "Psychometric Design", lvl: 88 },
-      { name: "COM-B Framework", lvl: 90 },
-      { name: "Nudge Architecture", lvl: 88 },
-      { name: "Behavioural Diagnosis", lvl: 85 },
-      { name: "Field Research & Data Collection", lvl: 92 },
-      { name: "Cognitive Bias Analysis", lvl: 86 },
-      { name: "0→1 Product Building", lvl: 94 },
-      { name: "Market Research", lvl: 90 },
-      { name: "Business Model Design", lvl: 92 },
-      { name: "Revenue Architecture", lvl: 88 },
-      { name: "Competitive Analysis", lvl: 88 },
-      { name: "Pitch Deck Creation", lvl: 95 },
+      { name: "Research Design & Insight Generation (Qual + Quant)", lvl: 92 },
+      { name: "Behavioral Analysis & Measurement Development", lvl: 90 },
+      { name: "Data Analysis, Experimentation & Validation", lvl: 88 },
+      { name: "Problem Solving & Design Thinking (Double Diamond)", lvl: 94 },
+      { name: "Product Strategy & Roadmapping", lvl: 90 },
+      { name: "MVP Development & Iteration", lvl: 92 },
+      { name: "Feature Prioritization & Trade-off Analysis", lvl: 88 },
+      { name: "Go-to-Market (GTM) Strategy", lvl: 86 },
+      { name: "Business Model & Monetization", lvl: 92 },
     ],
   },
   {
     category: "Soft Skills",
     type: "soft",
     items: [
-      { name: "User Discovery & Empathy", lvl: 92 },
-      { name: "Stakeholder Management", lvl: 85 },
-      { name: "Strategic Communication", lvl: 90 },
-      { name: "Systems Thinking", lvl: 88 },
+      { name: "User Empathy & Customer-Centric Thinking", lvl: 94 },
+      { name: "Curiosity & Problem Discovery Mindset", lvl: 92 },
+      { name: "Structured & Analytical Thinking", lvl: 90 },
+      { name: "Decision Making Under Uncertainty", lvl: 88 },
+      { name: "Ownership & Accountability", lvl: 94 },
       { name: "Cross-functional Collaboration", lvl: 86 },
-      { name: "Resilience & Adaptability", lvl: 94 },
-      { name: "Blue Ocean Thinking", lvl: 88 },
-      { name: "GTM Strategy", lvl: 84 },
+      { name: "Clear & Contextual Communication", lvl: 90 },
+      { name: "Adaptability in Fast-Changing Environments", lvl: 92 },
+      { name: "Prioritization & Focus", lvl: 88 },
     ],
   },
 ];
@@ -740,23 +740,28 @@ function Nav({ setPage, currentPage, navigateTo }) {
 // PILL NAV (persistent across all pages)
 // ═══════════════════════════════════════════════════════════════════════════
 
+
 function PillNav({ page, setPage, navigateTo }) {
   const [active, setActive] = useState("Home");
 
   useEffect(() => {
     if (page !== "home") return;
     const ids = ["top", "story", "work", "skills", "contact"];
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const id = e.target.id;
-          const map = { top: "Home", story: "Story", work: "Work", skills: "Skills", contact: "Contact" };
-          if (map[id]) setActive(map[id]);
-        }
-      });
-    }, { threshold: 0.3, rootMargin: "-10% 0px -50% 0px" });
-    ids.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
-    return () => obs.disconnect();
+    const map = { top: "Home", story: "Story", work: "Work", skills: "Skills", contact: "Contact" };
+
+    const update = () => {
+      const trigger = window.innerHeight * 0.35;
+      let current = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= trigger) current = id;
+      }
+      setActive(map[current]);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
   }, [page]);
 
   const items = ["Home", "Story", "Work", "Skills", "Contact"];
@@ -794,7 +799,7 @@ function PillNav({ page, setPage, navigateTo }) {
           letterSpacing: "0.05em",
           transition: "all 0.35s cubic-bezier(0.16,1,0.3,1)",
           whiteSpace: "nowrap",
-          boxShadow: active === item && page === "home" ? "0 6px 18px rgba(198,93,59,0.4)" : "none",
+          boxShadow: active === item && page === "home" ? `0 6px 18px rgba(198,93,59,0.4)` : "none",
         }}>{item}</button>
       ))}
     </div>
@@ -802,174 +807,9 @@ function PillNav({ page, setPage, navigateTo }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// HERO
+// HERO — replaced by PrismaHero component
 // ═══════════════════════════════════════════════════════════════════════════
 
-function Hero() {
-  const words = ["Researches.", "Builds.", "Validates.", "Launches.", "Obsesses."];
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    const t = setInterval(() => setIdx(i => (i + 1) % words.length), 2200);
-    return () => clearInterval(t);
-  }, []);
-
-  return (
-    <section id="top" style={{
-      minHeight: "100vh",
-      padding: "140px 48px 100px",
-      position: "relative",
-      overflow: "hidden",
-    }} className="pad-side">
-      {/* Floating orbs */}
-      <div className="orb" style={{ width: 400, height: 400, top: "15%", right: "-8%", background: `${C.primary}25`, animation: "floatSlow 8s ease-in-out infinite" }} />
-      <div className="orb" style={{ width: 300, height: 300, bottom: "10%", left: "-5%", background: `${C.accent}30`, animation: "float 10s ease-in-out infinite" }} />
-      <div className="orb" style={{ width: 200, height: 200, top: "40%", left: "40%", background: `${C.secondary}35`, filter: "blur(30px)" }} />
-
-      {/* Decorative rotating rings */}
-      <div className="hide-mob" style={{
-        position: "absolute", top: "18%", right: "8%",
-        width: 180, height: 180,
-        border: `1px solid ${C.primary}30`,
-        borderRadius: "50%",
-        animation: "rotateSlow 28s linear infinite",
-      }}>
-        <div style={{ position: "absolute", inset: 20, border: `1px dashed ${C.secondary}40`, borderRadius: "50%", animation: "rotateReverse 18s linear infinite" }} />
-        <div style={{ position: "absolute", width: 10, height: 10, borderRadius: "50%", background: `linear-gradient(135deg, ${C.primary}, ${C.cta})`, top: -5, left: "50%", transform: "translateX(-50%)", boxShadow: `0 0 20px ${C.primary}` }} />
-      </div>
-
-      {/* Profile glass card */}
-      <div className="hide-mob" style={{
-        position: "absolute", right: "6%", top: "50%", transform: "translateY(-50%)",
-        width: 320, zIndex: 3,
-        animation: "floatSlow 6s ease-in-out infinite",
-      }}>
-        <div className="glass-heavy fadeUp" style={{
-          overflow: "hidden",
-          animationDelay: "0.9s",
-        }}>
-          <div className="img-wrap" style={{ height: 340, borderRadius: "24px 24px 0 0" }}>
-            <img src={IMG.portrait} alt="Arvind B" style={{ objectPosition: "center 35%" }} />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(180deg, transparent 50%, rgba(31,42,36,0.4) 100%)",
-            }} />
-            <div style={{ position: "absolute", top: 16, left: 16, display: "flex", gap: 6 }}>
-              <span className="pill" style={{ fontSize: 10, background: "rgba(253,246,240,0.65)", backdropFilter: "blur(10px)" }}>
-                <span style={{ width: 6, height: 6, background: "#4ADE80", borderRadius: "50%", animation: "pulseBorder 2s infinite" }} />
-                Available
-              </span>
-            </div>
-          </div>
-          <div style={{ padding: "22px 26px" }}>
-            <div className="eyebrow" style={{ marginBottom: 10, fontSize: 10 }}>Bengaluru, India</div>
-            <h3 className="serif" style={{ fontSize: 26, fontWeight: 600, marginBottom: 6 }}>Arvind B</h3>
-            <p style={{ fontSize: 12, color: C.textMute, lineHeight: 1.55, fontWeight: 300, marginBottom: 16 }}>
-              Behavioural Researcher · Product Builder · 0→1 Specialist
-            </p>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {["Research", "Product", "Strategy"].map(t => (
-                <span key={t} style={{
-                  padding: "4px 10px",
-                  fontSize: 10, letterSpacing: "0.06em",
-                  background: `${C.primary}15`,
-                  color: C.primary,
-                  borderRadius: 100, fontWeight: 500,
-                  textTransform: "uppercase",
-                }}>{t}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Mini stat chips */}
-        <div className="glass-frost fadeUp" style={{
-          marginTop: 14, padding: "16px 22px",
-          display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
-          gap: 12, animationDelay: "1.1s",
-        }}>
-          {[["6+", "Projects"], ["2500+", "Teams"], ["IIT/IISc", "Stages"]].map(([n, l]) => (
-            <div key={l} style={{ textAlign: "center" }}>
-              <div className="serif" style={{ fontSize: 20, fontWeight: 700, color: C.primary, lineHeight: 1 }}>{n}</div>
-              <div style={{ fontSize: 9, color: C.textMute, letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 4 }}>{l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Hero content */}
-      <div style={{ maxWidth: 720, position: "relative", zIndex: 2, minHeight: "60vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-
-
-        <h1 className="serif fadeUp" style={{
-          fontSize: "clamp(48px, 7.5vw, 96px)",
-          fontWeight: 300, lineHeight: 1.02,
-          color: C.text, marginBottom: 6,
-          animationDelay: "0.25s",
-        }}>
-          The kind of person
-        </h1>
-        <div style={{ minHeight: "1.1em", marginBottom: 6 }}>
-          <h1 className="serif fadeUp" style={{
-            fontSize: "clamp(48px, 7.5vw, 96px)",
-            fontWeight: 700, fontStyle: "italic",
-            lineHeight: 1.02, marginBottom: 6,
-            background: `linear-gradient(135deg, ${C.primary}, ${C.cta})`,
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            animationDelay: "0.4s",
-            transition: "all 0.5s cubic-bezier(0.16,1,0.3,1)",
-          }}>
-            {words[idx]}
-          </h1>
-        </div>
-        <h1 className="serif fadeUp" style={{
-          fontSize: "clamp(48px, 7.5vw, 96px)",
-          fontWeight: 300, lineHeight: 1.02,
-          color: C.text, marginBottom: 36,
-          animationDelay: "0.55s",
-        }}>
-          With intent.
-        </h1>
-
-        <p className="fadeUp" style={{
-          fontSize: "clamp(15px, 1.8vw, 19px)",
-          lineHeight: 1.85, color: C.textSoft,
-          maxWidth: 540, fontWeight: 300,
-          marginBottom: 44, animationDelay: "0.85s",
-          fontStyle: "normal",
-        }}>
-          Ideas live in the in-between.{" "}
-          <br />Between curiosity and courage. Between data and instinct.
-          <br />That&apos;s where I work &mdash; turning human behaviour into intuitive experiences,
-          <br />trying to understand the &lsquo;Why&rsquo; behind what we do.
-        </p>
-
-        <div className="fadeUp" style={{ display: "flex", gap: 14, flexWrap: "wrap", animationDelay: "0.85s" }}>
-          <button className="btn-primary" onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}>
-            See My Work
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          <button className="btn-ghost" onClick={() => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" })}>
-            The Story
-          </button>
-        </div>
-      </div>
-
-      {/* Scroll cue */}
-      <div style={{
-        position: "absolute", bottom: 80, left: "50%", transform: "translateX(-50%)",
-        display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
-        opacity: 0, animation: "fadeIn 1s ease 1.8s forwards",
-      }}>
-        <span className="mono" style={{ fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase", color: C.textMute }}>Scroll</span>
-        <div style={{ width: 1, height: 50, background: `linear-gradient(to bottom, ${C.textMute}, transparent)` }} />
-      </div>
-
-
-    </section>
-  );
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // STORY
@@ -1340,10 +1180,10 @@ function Contact() {
         </p>
 
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 64 }}>
-          <a href="https://linkedin.com/in/arvind02" target="_blank" rel="noopener noreferrer" className="btn-primary">
+          <GlassButton href="https://linkedin.com/in/arvind02" target="_blank">
             Let's Connect
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </a>
+          </GlassButton>
           <a href="mailto:arvindbaskar02@gmail.com" className="btn-ghost">
             Send Email
           </a>
@@ -1355,20 +1195,30 @@ function Contact() {
           marginBottom: 64,
         }}>
           {[
-            { l: "Email", v: "arvindbaskar02@gmail.com", icon: "✉" },
-            { l: "LinkedIn", v: "arvind02", icon: "◉" },
-            { l: "Location", v: "Bengaluru, India", icon: "◈" },
-          ].map(({ l, v, icon }) => (
+            { l: "Email", v: "arvindbaskar02@gmail.com", href: "mailto:arvindbaskar02@gmail.com", icon: (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            )},
+            { l: "LinkedIn", v: "Arvind B", href: "https://linkedin.com/in/arvind02", icon: (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            )},
+            { l: "Location", v: "Bengaluru, India", href: null, icon: (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            )},
+          ].map(({ l, v, href, icon }) => (
             <div key={l} style={{ textAlign: "center" }}>
-              <div style={{
-                width: 40, height: 40, borderRadius: 12,
-                background: `${C.primary}15`,
-                color: C.primary, fontSize: 18,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                margin: "0 auto 14px",
-              }}>{icon}</div>
-              <div className="mono" style={{ fontSize: 10, color: C.accent, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6 }}>{l}</div>
-              <div style={{ fontSize: 13, color: C.text, fontWeight: 400, wordBreak: "break-all" }}>{v}</div>
+              <a href={href || undefined} target={href?.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
+                style={{ textDecoration: "none", cursor: href ? "none" : "default" }} className={href ? "hoverable" : ""}>
+                <div style={{
+                  width: 40, height: 40, borderRadius: 12,
+                  background: `${C.primary}15`,
+                  color: C.primary, fontSize: 18,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  margin: "0 auto 14px",
+                  transition: "background 0.2s",
+                }}>{icon}</div>
+                <div className="mono" style={{ fontSize: 10, color: C.accent, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 6 }}>{l}</div>
+                <div style={{ fontSize: 13, color: C.text, fontWeight: 400, wordBreak: "break-all" }}>{v}</div>
+              </a>
             </div>
           ))}
         </div>
@@ -1770,10 +1620,10 @@ function ProjectPage({ id, setPage, setProjectId }) {
           <p style={{ fontSize: 15, color: C.textSoft, fontWeight: 300, marginBottom: 32, maxWidth: 520, margin: "0 auto 32px", lineHeight: 1.7 }}>
             Each of these products taught me something I now bring to your team. Imagine what we could build with that learning compounded.
           </p>
-          <a href="mailto:arvindbaskar02@gmail.com" className="btn-primary">
+          <GlassButton href="mailto:arvindbaskar02@gmail.com" target="_self">
             Start a Conversation
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </a>
+          </GlassButton>
         </div>
 
         {/* Other projects */}
@@ -1847,12 +1697,13 @@ export default function Portfolio() {
       <style>{globalCSS}</style>
       <div className="bg-fixed" />
       <div className="bg-tint" />
+      <GlassFilter />
       <Cursor />
       <Nav setPage={setPage} currentPage={page} navigateTo={navigateTo} />
 
       {page === "home" && (
         <>
-          <Hero />
+          <PrismaHero />
           <Story />
           <Work setPage={setPage} setProjectId={setProjectId} />
           <Skills />
