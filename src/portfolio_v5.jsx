@@ -342,6 +342,7 @@ const IMG = {
 const PROJECTS = [
   {
     id: "cook2you",
+    logo: "/logo-cook2you.svg",
     year: "2022",
     category: "FoodTech · Blue Ocean",
     name: "Cook2You",
@@ -393,6 +394,7 @@ const PROJECTS = [
   },
   {
     id: "niraivu",
+    logo: "/logo-niraivu.svg",
     year: "2023",
     category: "Behavioural Science · Legacy Tech",
     name: "Niraivu.ly",
@@ -435,6 +437,7 @@ const PROJECTS = [
   },
   {
     id: "krishiksha",
+    logo: "/logo-krishiksha.svg",
     year: "2024",
     category: "AgriTech · Behavioural Design",
     name: "KriShiKsha",
@@ -480,6 +483,7 @@ const PROJECTS = [
   },
   {
     id: "tebm",
+    logo: "/logo-tebm.svg",
     year: "2024",
     category: "Behavioural Science · Public Policy",
     name: "The Eco-Bank Model",
@@ -521,6 +525,7 @@ const PROJECTS = [
   },
   {
     id: "farmargro",
+    logo: "/logo-farMargro.svg",
     year: "2021",
     category: "AgriTech · Social Impact",
     name: "FarMarGro",
@@ -1017,14 +1022,18 @@ function Work({ setPage, setProjectId }) {
                     <h3 className="serif" style={{ fontSize: 30, fontWeight: 600, color: C.light, lineHeight: 1.1, marginTop: 10 }}>{p.name}</h3>
                   </div>
                   <div style={{
-                    width: 48, height: 48, borderRadius: "50%",
-                    background: `${p.hex}30`,
-                    border: `1px solid ${p.hex}60`,
+                    width: 56, height: 56, borderRadius: 14,
+                    background: "rgba(253,246,240,0.08)",
+                    border: `1px solid ${p.hex}40`,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0, backdropFilter: "blur(12px)",
+                    overflow: "hidden",
                     transition: "transform 0.3s",
                   }}>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12m0 0l-5-5m5 5l-5 5" stroke={p.hex} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    {p.logo
+                      ? <img src={p.logo} alt={p.name} style={{ width: 44, height: 44, objectFit: "contain" }} />
+                      : <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12m0 0l-5-5m5 5l-5 5" stroke={p.hex} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    }
                   </div>
                 </div>
 
@@ -1273,9 +1282,22 @@ function ProjectPage({ id, setPage, setProjectId }) {
             All Projects
           </button>
 
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 28 }}>
-            <span className="pill-dark">{proj.year}</span>
-            {proj.category.split("·").map(t => <span key={t} className="pill-dark">{t.trim()}</span>)}
+          <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28, flexWrap: "wrap" }}>
+            {proj.logo && (
+              <div style={{
+                width: 72, height: 72, borderRadius: 18,
+                background: "rgba(253,246,240,0.12)", backdropFilter: "blur(16px)",
+                border: "1px solid rgba(253,246,240,0.2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                overflow: "hidden", flexShrink: 0,
+              }}>
+                <img src={proj.logo} alt={proj.name} style={{ width: 56, height: 56, objectFit: "contain" }} />
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <span className="pill-dark">{proj.year}</span>
+              {proj.category.split("·").map(t => <span key={t} className="pill-dark">{t.trim()}</span>)}
+            </div>
           </div>
 
           <h1 className="serif" style={{
