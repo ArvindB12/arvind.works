@@ -1031,7 +1031,7 @@ function Work({ setPage, setProjectId }) {
                     transition: "transform 0.3s",
                   }}>
                     {p.logo
-                      ? <img src={p.logo} alt={p.name} style={{ width: 44, height: 44, objectFit: "contain" }} />
+                      ? <img src={p.logo} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       : <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12m0 0l-5-5m5 5l-5 5" stroke={p.hex} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     }
                   </div>
@@ -1291,7 +1291,7 @@ function ProjectPage({ id, setPage, setProjectId }) {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 overflow: "hidden", flexShrink: 0,
               }}>
-                <img src={proj.logo} alt={proj.name} style={{ width: 56, height: 56, objectFit: "contain" }} />
+                <img src={proj.logo} alt={proj.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             )}
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
