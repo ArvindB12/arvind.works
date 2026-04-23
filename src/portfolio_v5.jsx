@@ -1022,7 +1022,7 @@ function Work({ setPage, setProjectId }) {
                     <h3 className="serif" style={{ fontSize: 30, fontWeight: 600, color: C.light, lineHeight: 1.1, marginTop: 10 }}>{p.name}</h3>
                   </div>
                   <div style={{
-                    width: 56, height: 56, borderRadius: 14,
+                    width: 56, height: 56, borderRadius: "50%",
                     background: "rgba(253,246,240,0.08)",
                     border: `1px solid ${p.hex}40`,
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -1285,7 +1285,7 @@ function ProjectPage({ id, setPage, setProjectId }) {
           <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28, flexWrap: "wrap" }}>
             {proj.logo && (
               <div style={{
-                width: 72, height: 72, borderRadius: 18,
+                width: 72, height: 72, borderRadius: "50%",
                 background: "rgba(253,246,240,0.12)", backdropFilter: "blur(16px)",
                 border: "1px solid rgba(253,246,240,0.2)",
                 display: "flex", alignItems: "center", justifyContent: "center",
